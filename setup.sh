@@ -97,9 +97,9 @@ function install_docker() {
   echo "Installing docker."
   if [[ "$ARCH" == "x86" ]]
   then
-    export DOCKER_OFFLINE_PACKAGE=$target_file_x86 && \
+    export DOCKER_OFFLINE_PACKAGE=$target_file_x86
   else
-    export DOCKER_OFFLINE_PACKAGE=$target_file_arm && \
+    export DOCKER_OFFLINE_PACKAGE=$target_file_arm
   fi
   tar axvf $DOCKER_OFFLINE_PACKAGE -C /usr/bin/ --strip-components=1
   cp -v -f $path/packages/docker/docker.service /usr/lib/systemd/system/
