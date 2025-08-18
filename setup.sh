@@ -2,9 +2,7 @@
 
 set -e
 export path=`pwd`
-export capath="/opt/.certs"
 export docker_data="/data/docker_data"
-export ansible_log_dir="$path/log"
 export ansible_image_url="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
 export docker_package_url_x86="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
 export docker_package_url_arm="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz"
@@ -12,7 +10,6 @@ export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
 export target_file_arm="$path/packages/docker/arm/docker-27.2.0.tgz"
 export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
 export target_docker_filedir_arm="$path/roles/docker/files/arm/docker-27.2.0.tgz"
-export ssh_pass="sulibao"
 export os_arch=$(uname -m)
 
 function get_arch_package() {
@@ -26,7 +23,6 @@ function get_arch_package() {
   if [[ "$os_arch" == "x86_64" ]]; then
     ARCH="x86"
     echo -e "Detected Operating System: $OS, Architecture：X86"
-    mkdir -p $ansible_log_dir
     if [ -f "$target_file_x86" ]; then
       echo "The file $target_file_x86 already exists, skip download."
     else
@@ -42,7 +38,6 @@ function get_arch_package() {
   elif [[ "$os_arch" == "aarch64" ]]; then
     ARCH="arm64"
     echo -e "Detected Operating System: $OS, Architecture: ARM64"
-    mkdir -p $ansible_log_dir
     if [ -f "$target_file_arm" ]; then
       echo "The file $target_file_arm already exists, skip download."
     else
@@ -64,42 +59,42 @@ function get_arch_package() {
 function check_docker() {
   echo "Make sure docker is installed and running."
   if ! [ -x "$(command -v docker)" ]; then
-    echo "docker not find."
+    echo "Docker not find."
     create_docker_group_and_user
     install_docker
   else
-    echo "docker exists."
+    echo "Docker exists."
   fi
   if ! systemctl is-active --quiet docker; then
-    echo "docker is not running."
+    echo "Docker is not running."
     create_docker_group_and_user
     install_docker
   else
-    echo "docker is running."
+    echo "Docker is running."
   fi
 }
 
 function check_docker_compose() {
   if ! [ -x "$(command -v docker-compose)" ]; then
-    echo "docker-compose not find."
+    echo "Docker-compose not find."
     install_docker_compose   
   else
-    echo "docker-compose exist."
+    echo "Docker-compose exist."
   fi
 }
 
 function create_docker_group_and_user() {
   if ! getent group docker >/dev/null 2>&1; then
     groupadd docker
-    echo "docker group created successfully."
+    echo "Docker group created successfully."
   else
-    echo "docker group already exists."
+    echo "Docker group already exists."
   fi
   if ! id -u docker >/dev/null 2>&1; then
     useradd -m -s /bin/bash -g docker docker
-    echo "docker user has been created and added to docker group."
+    echo "Docker user has been created and added to docker group."
   else
-    echo "docker user already exists."
+    echo "Docker user already exists."
   fi
 }
 
