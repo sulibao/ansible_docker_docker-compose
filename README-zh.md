@@ -54,10 +54,6 @@ receivers:
 
 定义需要的警报规则的地方
 
-## blackbox.yml
-
-定义黑盒描述文件参数
-
 ## prometheus.yml
 
 配置了监控、警报等
@@ -77,12 +73,12 @@ grafana_user="admin"
 grafana_password="admin"
 # pushgateway镜像和版本
 pushgateway_image="registry.cn-chengdu.aliyuncs.com/su03/pushgateway:v1.6.2"
-# blackbox_exporter镜像和版本
-blackbox_image="registry.cn-chengdu.aliyuncs.com/su03/blackbox-exporter:0.25.0"
 # node_exporter镜像和版本
 nodeexporter_image="registry.cn-chengdu.aliyuncs.com/su03/node-exporter:1.6.1-debian-11-r8"
-# prometheus数据源地址，此行主要影响到./config/datasources.yaml中datasources.url的值
-prometheus_url="http://192.168.2.193:9090"
+# snmp-exporter镜像和版本
+snmp_image="registry.cn-chengdu.aliyuncs.com/su03/snmp-exporter:v0.26.0"
+# prometheus数据源地址，此行主要影响到./config/datasources.yaml中datasources.url和docker-compose.yml中的SNMP_EXPORTER_TARGETS的值
+monitor_host="xx.xx.xx.xx"
 ```
 
 ## 面板json文件

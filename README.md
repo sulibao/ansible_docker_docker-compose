@@ -54,10 +54,6 @@ receivers:
 
 The place where the necessary alert rules need to be defined
 
-## blackbox.yml
-
-Define the parameters of the black box description file
-
 ## prometheus.yml
 
 Equipped with monitoring, alerts, etc.
@@ -77,12 +73,12 @@ grafana_user="admin"
 grafana_password="admin"
 # pushgateway image and version
 pushgateway_image="registry.cn-chengdu.aliyuncs.com/su03/pushgateway:v1.6.2"
-# blackbox_exporter image and version
-blackbox_image="registry.cn-chengdu.aliyuncs.com/su03/blackbox-exporter:0.25.0"
 # node_exporter image and version
 nodeexporter_image="registry.cn-chengdu.aliyuncs.com/su03/node-exporter:1.6.1-debian-11-r8"
-# Prometheus data source address. This line mainly affects the value of "datasources.url" in the file "./config/datasources.yaml".
-prometheus_url="http://192.168.2.193:9090"
+# snmp_exporter image and version
+snmp_image="registry.cn-chengdu.aliyuncs.com/su03/snmp-exporter:v0.26.0"
+# The address of the Prometheus data source. This line mainly affects the values of `datasources.url` in `./config/datasources.yaml` and `SNMP_EXPORTER_TARGETS` in `docker-compose.yml`.
+monitor_host="xx.xx.xx.xx"
 ```
 
 ## Dashboard json file
