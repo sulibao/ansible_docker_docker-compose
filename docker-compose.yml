@@ -12,6 +12,8 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     restart: always
+    networks:
+      - monitor_network
 
   alertmanager:
     image: ${alertmanager_image}
@@ -23,6 +25,8 @@ services:
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
     restart: always
+    networks:
+      - monitor_network
 
   grafana:
     image: ${grafana_image}
@@ -39,6 +43,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${grafana_password}
       - prometheus_url=http://${monitor_host}:9090
     restart: always
+    networks:
+      - monitor_network
 
   pushgateway:
     image: ${pushgateway_image} 
@@ -46,6 +52,8 @@ services:
     ports:
       - "9091:9091"
     restart: always
+    networks:
+      - monitor_network
 
   node-exporter:
     image: ${nodeexporter_image}
@@ -53,6 +61,8 @@ services:
     ports:
       - "9100:9100"
     restart: always
+    networks:
+      - monitor_network
 
   snmp-exporter:
     image: ${snmp_image}
@@ -62,6 +72,15 @@ services:
     restart: always
     environment:
       - SNMP_EXPORTER_TARGETS=${monitor_host}:9116
+    networks:
+      - monitor_network
 
 volumes:
-  grafana_data:
+  grafana_data:    
+    driver: local
+    name: grafana_data
+
+networks:
+  monitor_network:
+    driver: bridge
+    name: monitor_network
