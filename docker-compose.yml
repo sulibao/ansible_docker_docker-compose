@@ -37,7 +37,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${grafana_user}
       - GF_SECURITY_ADMIN_PASSWORD=${grafana_password}
-      - prometheus_url=${prometheus_url}
+      - prometheus_url=http://${monitor_host}:9090
     restart: always
 
   pushgateway:
@@ -47,17 +47,6 @@ services:
       - "9091:9091"
     restart: always
 
-  blackbox-exporter:
-    image: ${blackbox_image}
-    container_name: blackbox-exporter
-    ports:
-      - "9115:9115"
-    volumes:
-      - ./blackbox.yml:/etc/blackbox_exporter/config.yml
-    command:
-      - '--config.file=/etc/blackbox_exporter/config.yml'
-    restart: always
-
   node-exporter:
     image: ${nodeexporter_image}
     container_name: node-exporter
@@ -65,5 +54,14 @@ services:
       - "9100:9100"
     restart: always
 
+  snmp-exporter:
+    image: ${snmp_image}
+    container_name: snmap
+    ports:
+      - "9116:9116"
+    restart: always
+    environment:
+      - SNMP_EXPORTER_TARGETS=${monitor_host}:9116
+
 volumes:
-  grafana_data:    
+  grafana_data:
