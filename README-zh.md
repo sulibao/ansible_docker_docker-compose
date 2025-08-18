@@ -2,26 +2,31 @@
 
 本文档用于说明通过docker-compose快速部署prometheus(email)+alertmanager+node-exporter+grafana。
 
-使用方法如下（提示：在执行此操作之前，您需要按照README文件将每个文件中的参数更改为您的实际参数）：
+## 安装前检查项
+
+### setup.sh
 
 ```bash
-# 执行以下命令
-bash setup.sh / bash -x setup.sh
+# 此项为存储docker数据的目录，请根据实际需求进行更改
+export docker_data="/data/docker_data"
 ```
 
-## setup.sh
+### .env
 
-定义安装docker、docker-compose、monitor system的函数，安装时主要是运行这个文件
+```bash
+registry_url="registry.cn-chengdu.aliyuncs.com/su03"   # 镜像仓库
+prometheus_image="$registry_url/prometheus:2.46.0-debian-11-r5"  # proemtheus镜像版本
+alertmanager_image="$registry_url/alertmanager:0.25.0-debian-11-r171"  # alertmanager镜像版本
+grafana_image="$registry_url/grafana:9.3.6"   # grafana镜像版本
+grafana_user="xxx"     # grafana用户名
+grafana_password="xxx"   # grafana用户密码
+pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway镜像版本
+nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   # node_exporter镜像版本
+snmp_image="$registry_url/snmp-exporter:v0.26.0"   # snmp镜像版本
+monitor_host="192.168.2.193"   # 部署监控系统的主机IP
+```
 
-注意：安装前可以检查一下`./packages/daemon.json`中的`data-root`参数，这个参数表示为docker的数据存储目录，默认为`/data/docker_data`，若有需求，可自行修改
-
-## docker-compose.yml
-
-定义部署所需的映像和配置文件参数
-
-## alertmanager.yml
-
-定义告警邮件配置参数
+### alertmanager.yml
 
 ```yaml
 global:
@@ -46,39 +51,36 @@ route:
 receivers:
 - name: 'test-alertmanager'
   email_configs:
-  # 警告接收电子邮件地址
+  # 接收警告信息的电子邮件地址
   - to: 'xxx'               
 ```
 
-## 4.rules.yml
+### 网络连通性
 
-定义需要的警报规则的地方
+1.此项目主要涉及为在线安装，依赖存储于aliyun上的物料资源，确保网络能够正常到达
 
-## prometheus.yml
-
-配置了监控、警报等
-
-## 修改变量文件.env
+2.无法联通公网的情况下，请提前在联网环境下下载好资源包再传入服务器安装，依赖下载的资源如下：
 
 ```bash
-# promethues镜像和版本
-prometheus_image="registry.cn-chengdu.aliyuncs.com/su03/prometheus:2.46.0-debian-11-r5"
-# alertmanager镜像和版本
-alertmanager_image="registry.cn-chengdu.aliyuncs.com/su03/alertmanager:0.25.0-debian-11-r171"
-# grafana镜像和版本
-grafana_image="registry.cn-chengdu.aliyuncs.com/su03/grafana:9.3.6"
-# grafana登录用户
-grafana_user="admin"
-# grafana登录密码
-grafana_password="admin"
-# pushgateway镜像和版本
-pushgateway_image="registry.cn-chengdu.aliyuncs.com/su03/pushgateway:v1.6.2"
-# node_exporter镜像和版本
-nodeexporter_image="registry.cn-chengdu.aliyuncs.com/su03/node-exporter:1.6.1-debian-11-r8"
-# snmp-exporter镜像和版本
-snmp_image="registry.cn-chengdu.aliyuncs.com/su03/snmp-exporter:v0.26.0"
-# prometheus数据源地址，此行主要影响到./config/datasources.yaml中datasources.url和docker-compose.yml中的SNMP_EXPORTER_TARGETS的值
-monitor_host="xx.xx.xx.xx"
+docker安装包：
+X86: https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz
+Arm: https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz
+
+docker安装包存放路径(必须确认正确)：
+X86: ./packages/docker/x86/docker-27.2.0.tgz
+Arm: ./packages/docker/arm/docker-27.2.0.tgz
+
+monitor涉及到的镜像：
+见.env变量文件
+可在联网环境下通过`docker/nerdctl pull image`过后
+以`docker/nerdctl save -o xxx.tar image1 image2 ......`的形式打包
+传输到离线环境中使用`docker/nerdctl load -i xxx.tar`进行导入
+```
+
+## 安装和使用
+
+```bash
+bash setup.sh / bash -x setup.sh          
 ```
 
 ## 面板json文件
@@ -94,7 +96,5 @@ node-exporter-grafana.json：Server disk, io, cpu usage is displayed
 ```bash
 prometheus：http://IP:9090
 
-grafana：http://IP:3000,使用`.env`文件中定义的用户和密码进行登录
-
-alertmanager：http://IP:9093
+grafana：http://IP:3000, 使用`.env`文件中定义的用户和密码进行登录
 ```

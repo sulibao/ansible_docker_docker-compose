@@ -1,39 +1,44 @@
 # prom_alert_node-exporter
 
-This document is intended to illustrate the rapid deployment of Prometheus (via docker-compose) along with Alertmanager, Node-Exporter, and Grafana.
+This document is intended to illustrate the rapid deployment of Prometheus (via docker-compose) along with Alertmanager, Node-Exporter, SNMP-Exporter and Grafana.
 
-The usage method is as follows (note: Before performing this operation, you need to modify the parameters in each file according to your actual parameters as per the README file):
+## Pre-installation inspection items
+
+### setup.sh
 
 ```bash
-# Execute the following command
-bash setup.sh / bash -x setup.sh
+# Pre-installation check item: This is the directory for storing Docker data. Please make the necessary adjustments according to your actual requirements.
+export docker_data="/data/docker_data"
 ```
 
-## setup.sh
+### .env
 
-Define functions for installing Docker, Docker Compose, and the monitoring system. During the installation process, the main operation is to run this file.
+```bash
+registry_url="registry.cn-chengdu.aliyuncs.com/su03"   # image registry
+prometheus_image="$registry_url/prometheus:2.46.0-debian-11-r5"  # proemtheus image version
+alertmanager_image="$registry_url/alertmanager:0.25.0-debian-11-r171"  # alertmanager image version
+grafana_image="$registry_url/grafana:9.3.6"   # grafana image version
+grafana_user="xxx"     # grafana username
+grafana_password="xxx"   # grafana password
+pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway image version
+nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   # node_exporter image version
+snmp_image="$registry_url/snmp-exporter:v0.26.0"   # snmp image version
+monitor_host="192.168.2.193"   # The IP address of the host where the monitoring system is deployed
+```
 
-Note: Before installation, you can check the `data-root` parameter in `./packages/daemon.json`. This parameter indicates the directory for storing Docker data. The default is `/data/docker_data`. If necessary, you can modify it yourself.
-
-## docker-compose.yml
-
-Define the parameters of the images and configuration files required for deployment
-
-## alertmanager.yml
-
-Define the configuration parameters for alarm emails
+### alertmanager.yml
 
 ```yaml
 global:
   resolve_timeout: 5m
-  # Mail server address, need to connect to the port
-  smtp_smarthost: 'smtp.qq.com:465'   
-  # Email address  
-  smtp_from: 'xxx'        
-  # Email authentication user address, usually the same as smtp_from        
-  smtp_auth_username: 'xxx'
-  # Email authorization code 
-  smtp_auth_password: 'xxx'
+  # The email server address requires specifying the connection port.
+  smtp_smarthost: 'smtp.qq.com:465'  
+  # email address
+  smtp_from: 'xxx'     
+  # Email authentication user address, usually the same as smtp_from      
+  smtp_auth_username: 'xxx'   
+  # Email authorization code  
+  smtp_auth_password: 'xxx'       
   smtp_require_tls: false
  
 route:
@@ -46,45 +51,42 @@ route:
 receivers:
 - name: 'test-alertmanager'
   email_configs:
-  # Alert receiving email address
-  - to: 'xxx'  
+  # The email address for receiving warning messages
+  - to: 'xxx'               
 ```
 
-## rules.yml
+### Network connectivity
 
-The place where the necessary alert rules need to be defined
+1.This project mainly involves enabling online installation, relying on the material resources stored on aliyun, to ensure that the network can reach normally.
 
-## prometheus.yml
-
-Equipped with monitoring, alerts, etc.
-
-## modify variables file ".env"
+2.In the case where the public network cannot be connected, please download the resource package in a networked environment in advance and then transfer it to the server for installation. The resources required for the installation are as follows:
 
 ```bash
-# promethues image and version
-prometheus_image="registry.cn-chengdu.aliyuncs.com/su03/prometheus:2.46.0-debian-11-r5"
-# alertmanager image and version
-alertmanager_image="registry.cn-chengdu.aliyuncs.com/su03/alertmanager:0.25.0-debian-11-r171"
-# grafana image and version
-grafana_image="registry.cn-chengdu.aliyuncs.com/su03/grafana:9.3.6"
-# grafana login user
-grafana_user="admin"
-# grafana login password
-grafana_password="admin"
-# pushgateway image and version
-pushgateway_image="registry.cn-chengdu.aliyuncs.com/su03/pushgateway:v1.6.2"
-# node_exporter image and version
-nodeexporter_image="registry.cn-chengdu.aliyuncs.com/su03/node-exporter:1.6.1-debian-11-r8"
-# snmp_exporter image and version
-snmp_image="registry.cn-chengdu.aliyuncs.com/su03/snmp-exporter:v0.26.0"
-# The address of the Prometheus data source. This line mainly affects the values of `datasources.url` in `./config/datasources.yaml` and `SNMP_EXPORTER_TARGETS` in `docker-compose.yml`.
-monitor_host="xx.xx.xx.xx"
+docker installation package：
+X86: https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz
+Arm: https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz
+
+docker Installation package storage path (must be confirmed to be correct)：
+X86: ./packages/docker/x86/docker-27.2.0.tgz
+Arm: ./packages/docker/arm/docker-27.2.0.tgz
+
+The images involved in the monitor:
+Refer to the.env variable file
+Can be packaged in a networked environment by using `docker/nerdctl pull image` afterwards
+In the form of `docker/nerdctl save -o xxx.tar image1 image2 ......`
+Transferred to an offline environment and imported using `docker/nerdctl load -i xxx.tar`
 ```
 
-## Dashboard json file
+## Install & Use
 
 ```bash
-# The dashboard file is configured by default with two initial node monitor panels.
+bash setup.sh / bash -x setup.sh          
+```
+
+## Dashboard JSON file
+
+```bash
+# The dashboard file has configured two initial node monitor panels.
 disk.json：Server disk usage is shown
 node-exporter-grafana.json：Server disk, io, cpu usage is displayed
 ```
@@ -94,7 +96,5 @@ node-exporter-grafana.json：Server disk, io, cpu usage is displayed
 ```bash
 prometheus：http://IP:9090
 
-grafana：http://IP:3000,Log in using the user and password defined in the `.env` file
-
-alertmanager：http://IP:9093
+grafana：http://IP:3000, Log in using the user and password defined in the `.env` file
 ```
