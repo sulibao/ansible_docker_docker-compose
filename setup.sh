@@ -3,7 +3,7 @@
 set -e
 export path=`pwd`
 export capath="/opt/.certs"
-export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.yml)
+export docker_data="/data/docker_data"
 export ansible_log_dir="$path/log"
 export ansible_image_url="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
 export docker_package_url_x86="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
