@@ -9,6 +9,8 @@ This document is intended to illustrate the rapid deployment of Prometheus (via 
 ```bash
 # Pre-installation check item: This is the directory for storing Docker data. Please make the necessary adjustments according to your actual requirements.
 export docker_data="/data/docker_data"
+# This is the directory where the docker-compose file for exporting is stored when multiple nodes are installed.
+install_dir: /root/deploy
 ```
 
 ### .env
@@ -23,6 +25,38 @@ grafana_password="xxx"   # grafana password
 pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway image version
 nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   # node_exporter image version
 monitor_host="192.168.2.193"   # The IP address of the host where the monitoring system is deployed
+```
+
+### hosts
+
+```bash
+[docker_main]   
+# This field must be filled in. It represents the main control node for installing the monitoring system. When "installExporters" in setup.sh is set to true, this node will also install Ansible, and Docker, Docker Compose, and Node-Exporter will be installed for the nodes in docker_nodes.
+192.168.2.193  
+[docker_nodes]   
+# This indicates that for nodes other than the main control nodes of the monitoring system, they can be left empty.
+192.168.2.190
+
+[docker_cluster:children]
+docker_main
+docker_nodes
+```
+
+### setup.sh
+
+```bash
+# This is the password for the node server when installing docker_nodes.
+export ssh_pass="sulibao" 
+.....
+function main() {
+  ......
+  const installExporters = true;  
+  # When there is only one node that needs to be monitored by node-exporter (that is, the IP of the docker_node in the hosts file is not defined), this option should be set to false.
+  if (installExporters) {
+    install_other_exporter();
+  }
+  ......
+}
 ```
 
 ### alertmanager.yml

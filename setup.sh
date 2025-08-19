@@ -254,11 +254,14 @@ function install_monitor() {
 }
 
 function main() {
-  get_arch_package
-  check_docker
-  check_docker_compose
-  install_other_exporter
-  install_monitor
+  get_arch_package();
+  check_docker();
+  check_docker_compose();
+  const installExporters = true;
+  if (installExporters) {
+    install_other_exporter();
+  }
+  install_monitor();
 }
 
 main

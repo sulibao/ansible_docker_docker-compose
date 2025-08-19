@@ -8,7 +8,9 @@
 
 ```bash
 # 此项为存储docker数据的目录，请根据实际需求进行更改
-export docker_data="/data/docker_data"
+export docker_data="/app/docker_data"
+# 此项为需要多节点安装exporter时的docker-compose文件存放目录
+install_dir: /root/deploy
 ```
 
 ### .env
@@ -23,6 +25,37 @@ grafana_password="xxx"   # grafana用户密码
 pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway镜像版本
 nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   #node_exporter镜像版本
 monitor_host="192.168.2.193"   # 部署监控系统的主机IP
+```
+
+### hosts
+
+```bash
+[docker_main]   
+# 此项必填，表示安装监控系统的主要控制节点，在setup.sh中的installExporters为true时，此节点上还会安装ansible，并且为docker_nodes中的节点安装docker和docker-compose以及node-exporter
+192.168.2.193  
+[docker_nodes]   
+# 此项表示除了监控系统的主要控制节点以外的其他节点，可以为空
+192.168.2.190
+
+[docker_cluster:children]
+docker_main
+docker_nodes
+```
+
+### setup.sh
+
+```bash
+# 此项为需要安装docker_nodes时的节点服务器密码
+export ssh_pass="sulibao" 
+.....
+function main() {
+  ......
+  const installExporters = true;   # 当你只有一个节点需要node-exporter监控(即hosts文件中docker_nodes未定义IP)时，此项应为false
+  if (installExporters) {
+    install_other_exporter();
+  }
+  ......
+}
 ```
 
 ### alertmanager.yml
