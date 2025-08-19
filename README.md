@@ -4,13 +4,16 @@ This document is intended to illustrate the rapid deployment of Prometheus (via 
 
 ## Pre-installation inspection items
 
-### setup.sh
+### ./group_vars/all.yml
 
 ```bash
-# Pre-installation check item: This is the directory for storing Docker data. Please make the necessary adjustments according to your actual requirements.
-export docker_data="/data/docker_data"
-# This is the directory where the docker-compose file for exporting is stored when multiple nodes are installed.
+docker_data_dir: /app/docker_data
+# This is the directory where the docker-compose file for exporting when multiple nodes are installed should be stored.
 install_dir: /root/deploy
+# Does this control have any nodes other than the monitoring system control nodes that need to be installed? If yes, fill in "true"; if no, fill in "false". When it is "false", the docker_nodes in the hosts file should also be left empty or commented out.
+installExporters: false
+# This is the password for the node server when installing docker_nodes.
+ssh_pass: sulibao
 ```
 
 ### .env
@@ -34,8 +37,8 @@ monitor_host="192.168.2.193"   # The IP address of the host where the monitoring
 # This field must be filled in. It represents the main control node for installing the monitoring system. When "installExporters" in setup.sh is set to true, this node will also install Ansible, and Docker, Docker Compose, and Node-Exporter will be installed for the nodes in docker_nodes.
 192.168.2.193  
 [docker_nodes]   
-# This indicates that for nodes other than the main control nodes of the monitoring system, they can be left empty.
-192.168.2.190
+# This indicates the nodes other than the main control nodes of the monitoring system. When this requirement is not met, please leave this field blank or add a comment. Additionally, in the ./group_vars/all.yml file, the installExporters field should be set to false.
+;192.168.2.190
 
 [docker_cluster:children]
 docker_main

@@ -4,13 +4,17 @@
 
 ## 安装前检查项
 
-### setup.sh
+### ./group_vars/all.yml
 
 ```bash
 # 此项为存储docker数据的目录，请根据实际需求进行更改
-export docker_data="/app/docker_data"
+docker_data_dir: /app/docker_data
 # 此项为需要多节点安装exporter时的docker-compose文件存放目录
 install_dir: /root/deploy
+# 此项控制是否有除监控系统控制节点以外的节点要安装，有则填true，无则填false，为false的同时hosts文件中的docker_nodes也应该置空或注释
+installExporters: false
+# 此项为需要安装docker_nodes时的节点服务器密码
+ssh_pass: sulibao
 ```
 
 ### .env
@@ -32,30 +36,14 @@ monitor_host="192.168.2.193"   # 部署监控系统的主机IP
 ```bash
 [docker_main]   
 # 此项必填，表示安装监控系统的主要控制节点，在setup.sh中的installExporters为true时，此节点上还会安装ansible，并且为docker_nodes中的节点安装docker和docker-compose以及node-exporter
-192.168.2.193  
+192.168.2.190  
 [docker_nodes]   
-# 此项表示除了监控系统的主要控制节点以外的其他节点，可以为空
-192.168.2.190
+# 此项表示除了监控系统的主要控制节点以外的其他节点，没有此需求时请将此项置空或注释，同时./group_vars/all.yml中的installExporters应填写false
+;192.168.2.193
 
 [docker_cluster:children]
 docker_main
 docker_nodes
-```
-
-### setup.sh
-
-```bash
-# 此项为需要安装docker_nodes时的节点服务器密码
-export ssh_pass="sulibao" 
-.....
-function main() {
-  ......
-  const installExporters = true;   # 当你只有一个节点需要node-exporter监控(即hosts文件中docker_nodes未定义IP)时，此项应为false
-  if (installExporters) {
-    install_other_exporter();
-  }
-  ......
-}
 ```
 
 ### alertmanager.yml

@@ -2,6 +2,7 @@
 
 set -e
 export path=`pwd`
+export installExporters=$(awk -F': ' '/installExporters:/ {print $2}' group_vars/all.yml)
 export capath="/opt/.certs"
 export ansible_log_dir="$path/log"
 export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.yml)
@@ -12,7 +13,7 @@ export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
 export target_file_arm="$path/packages/docker/arm/docker-27.2.0.tgz"
 export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
 export target_docker_filedir_arm="$path/roles/docker/files/arm/docker-27.2.0.tgz"
-export ssh_pass="sulibao"
+export ssh_pass=$(awk -F': ' '/ssh_pass:/ {print $2}' group_vars/all.yml)
 export os_arch=$(uname -m)
 
 function get_arch_package() {
@@ -254,14 +255,13 @@ function install_monitor() {
 }
 
 function main() {
-  get_arch_package();
-  check_docker();
-  check_docker_compose();
-  const installExporters = true;
-  if (installExporters) {
-    install_other_exporter();
-  }
-  install_monitor();
+  get_arch_package
+  check_docker
+  check_docker_compose
+  if [ "$installExporters" = true ]; then
+    install_other_exporter
+  fi
+  install_monitor
 }
 
 main
