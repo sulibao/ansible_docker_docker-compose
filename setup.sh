@@ -189,6 +189,12 @@ function install_docker_slave() {
   echo -e "\nInstalled docker for other nodes."
 }
 
+function exporter_outside() {
+  echo -e "Installing outside node_exporter."
+  docker exec -i ansible_sulibao /bin/sh -c "cd $path && ansible-playbook  ./other-exporter.yml"
+  echo -e "\nInstalled outside node_exporter."
+}
+
 function install_other_exporter() {
   echo -e "Installing exporter for other nodes."
   if [[ "$os_arch" == "x86_64" ]]; then
@@ -226,6 +232,18 @@ function install_other_exporter() {
   create_ssh_key
   copy_ssh_key
   install_docker_slave
+  exporter_outside  
+}
+
+function install_monitor() {
+  echo "Installing monitor with docker-compose."
+  if [ -f ./docker-compose.yml ]; then
+    docker-compose -f docker-compose.yml up -d
+  else
+    echo "docker-compose.yml file for monitor is not exists, please check the file."
+    exit 1
+  fi
+  echo "Installed monitor system."
 }
 
 function main() {
@@ -233,6 +251,7 @@ function main() {
   check_docker
   check_docker_compose
   install_other_exporter
+  install_monitor
 }
 
 main

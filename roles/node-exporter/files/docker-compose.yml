@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  node-exporter:
+    image: ${nodeexporter_image}
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: always
+    networks:
+      - monitor_network
+
+networks:
+  monitor_network:
+    driver: bridge
+    name: monitor_network

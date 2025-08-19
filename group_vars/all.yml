@@ -1,1 +1,2 @@
 docker_data_dir: /app/docker_data
+install_dir: /root/deploy
