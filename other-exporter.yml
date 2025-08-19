@@ -1,0 +1,4 @@
+- name: install node_exporter for other nodes
+  hosts: docker_nodes
+  roles: 
+    - node-exporter

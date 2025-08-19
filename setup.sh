@@ -3,7 +3,6 @@
 set -e
 export path=`pwd`
 export capath="/opt/.certs"
-export docker_data="/data/docker_data"
 export ansible_log_dir="$path/log"
 export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.yml)
 export ansible_image_url="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
@@ -233,10 +232,18 @@ function install_other_exporter() {
   copy_ssh_key
   install_docker_slave
   exporter_outside  
+  echo -e "Installed exporter for other nodes."
+}
+
+function ensure_targets() {
+  echo -e "Generating prometheus targets."
+  docker exec -i ansible_sulibao /bin/sh -c "cd $path && ansible-playbook  ./targets.yml"
+  echo -e "Generated prometheus targets."
 }
 
 function install_monitor() {
   echo "Installing monitor with docker-compose."
+  ensure_targets
   if [ -f ./docker-compose.yml ]; then
     docker-compose -f docker-compose.yml up -d
   else

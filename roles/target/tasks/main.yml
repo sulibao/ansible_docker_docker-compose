@@ -1,0 +1,5 @@
+- name: generate prometheus targets.json
+  template:
+    src: targets.json.j2
+    dest: ./targets.json
+    mode: '0644'

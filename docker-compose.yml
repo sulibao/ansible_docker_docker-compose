@@ -9,6 +9,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./rules.yml:/etc/prometheus/rules.yml
+      - ./targets.json:/etc/prometheus/targets.json
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     restart: always

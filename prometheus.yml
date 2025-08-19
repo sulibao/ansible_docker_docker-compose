@@ -16,8 +16,10 @@ scrape_configs:
       - targets: ['pushgateway:9091']
 
   - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['node-exporter:9100']
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/targets.json'
+        refresh_interval: 1m
 
 alerting:
   alertmanagers:

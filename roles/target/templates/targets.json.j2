@@ -1,0 +1,8 @@
+[
+  {
+    "targets": [{% for host in groups['docker_cluster'] %} "{{ host }}:9100"{% if not loop.last %},{% endif %}{% endfor %}],
+    "labels": {
+      "job": "node-exporter"
+    }
+  }
+]
