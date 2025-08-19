@@ -227,10 +227,6 @@ function install_other_exporter() {
     echo -e "Unsupported architecture detected: $os_arch"
     exit 1
   fi
-  pull_ansible_image
-  ensure_ansible
-  create_ssh_key
-  copy_ssh_key
   install_docker_slave
   exporter_outside  
   echo -e "Installed exporter for other nodes."
@@ -258,6 +254,10 @@ function main() {
   get_arch_package
   check_docker
   check_docker_compose
+  pull_ansible_image
+  ensure_ansible
+  create_ssh_key
+  copy_ssh_key
   if [ "$installExporters" = true ]; then
     install_other_exporter
   fi

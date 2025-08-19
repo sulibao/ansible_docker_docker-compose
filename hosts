@@ -1,7 +1,7 @@
 [docker_main]   
-192.168.2.193
+192.168.2.190
 [docker_nodes]
-;192.168.2.190
+;192.168.2.193
 
 [docker_cluster:children]
 docker_main

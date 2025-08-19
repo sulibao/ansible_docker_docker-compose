@@ -35,10 +35,10 @@ monitor_host="192.168.2.193"   # The IP address of the host where the monitoring
 ```bash
 [docker_main]   
 # This field must be filled in. It represents the main control node for installing the monitoring system. When "installExporters" in setup.sh is set to true, this node will also install Ansible, and Docker, Docker Compose, and Node-Exporter will be installed for the nodes in docker_nodes.
-192.168.2.193  
+192.168.2.190
 [docker_nodes]   
 # This indicates the nodes other than the main control nodes of the monitoring system. When this requirement is not met, please leave this field blank or add a comment. Additionally, in the ./group_vars/all.yml file, the installExporters field should be set to false.
-;192.168.2.190
+;192.168.2.193
 
 [docker_cluster:children]
 docker_main
