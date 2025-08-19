@@ -22,7 +22,6 @@ grafana_user="xxx"     # grafana username
 grafana_password="xxx"   # grafana password
 pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway image version
 nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   # node_exporter image version
-snmp_image="$registry_url/snmp-exporter:v0.26.0"   # snmp image version
 monitor_host="192.168.2.193"   # The IP address of the host where the monitoring system is deployed
 ```
 
@@ -86,9 +85,8 @@ bash setup.sh / bash -x setup.sh
 ## Dashboard JSON file
 
 ```bash
-# The dashboard file has configured two initial node monitor panels.
-disk.json：Server disk usage is shown
-node-exporter-grafana.json：Server disk, io, cpu usage is displayed
+The dashboard file configures a JSON dashboard based on node-exporter.
+Node Exporter Full.json
 ```
 
 ## Access point

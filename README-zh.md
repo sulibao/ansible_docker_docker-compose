@@ -21,8 +21,7 @@ grafana_image="$registry_url/grafana:9.3.6"   # grafana镜像版本
 grafana_user="xxx"     # grafana用户名
 grafana_password="xxx"   # grafana用户密码
 pushgateway_image="$registry_url/pushgateway:v1.6.2"   # pushgateway镜像版本
-nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   # node_exporter镜像版本
-snmp_image="$registry_url/snmp-exporter:v0.26.0"   # snmp镜像版本
+nodeexporter_image="$registry_url/node-exporter:1.6.1-debian-11-r8"   #node_exporter镜像版本
 monitor_host="192.168.2.193"   # 部署监控系统的主机IP
 ```
 
@@ -86,9 +85,8 @@ bash setup.sh / bash -x setup.sh
 ## 面板json文件
 
 ```bash
-# 仪表板文件配置了两个初始节点监视器面板
-disk.json：Server disk usage is shown
-node-exporter-grafana.json：Server disk, io, cpu usage is displayed
+# 仪表板文件配置了一个基于node-exporter的json dashboard
+Node Exporter Full.json
 ```
 
 ## 访问地址

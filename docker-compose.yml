@@ -64,17 +64,6 @@ services:
     networks:
       - monitor_network
 
-  # snmp-exporter:
-  #   image: ${snmp_image}
-  #   container_name: snmap
-  #   ports:
-  #     - "9116:9116"
-  #   restart: always
-  #   environment:
-  #     - SNMP_EXPORTER_TARGETS=${monitor_host}:9116
-  #   networks:
-  #     - monitor_network
-
 volumes:
   grafana_data:    
     driver: local
