@@ -1,0 +1,9 @@
+- name: install docker for other_nodes
+  hosts: docker_nodes
+  roles: 
+    - docker
+
+- name: install docker-compose for other_nodes
+  hosts: docker_nodes
+  roles:
+    - docker-compose
