@@ -147,6 +147,7 @@ function install_docker_compose {
 
 function ensure_ansible() {
   echo -e "Checking the status of the ansible."
+  mkdir -p $ansible_log_dir
   if test -z "$(docker ps -a | grep ansible_sulibao)"; then
     echo -e "Ansible is not running, will run."
     run_ansible
