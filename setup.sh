@@ -45,7 +45,6 @@ function get_arch_package() {
       echo "The file $target_file_arm already exists, skip download."
     else
       mkdir -p "$(dirname "$target_file_arm")" && \
-      mkdir -p "$(dirname "$target_docker_filedir_arm")"
       curl -C - -o "$target_file_arm" "$docker_package_url_arm"
       if [ $? -eq 0 ]; then
         echo "The file downloaded successfully."
@@ -146,13 +145,6 @@ function install_docker_compose {
   fi
 }
 
-function pull_ansible_image() {
-  echo -e "Pulling ansible image."
-  docker pull "$ansible_image_url" && \
-  mkdir -p "$ansible_log_dir"
-  echo -e "Pulled ansible image."
-}
-
 function ensure_ansible() {
   echo -e "Checking the status of the ansible."
   if test -z "$(docker ps -a | grep ansible_sulibao)"; then
@@ -229,7 +221,6 @@ function install_other_exporter() {
   fi
   install_docker_slave
   exporter_outside  
-  echo -e "Installed exporter for other nodes."
 }
 
 function ensure_targets() {
@@ -254,7 +245,6 @@ function main() {
   get_arch_package
   check_docker
   check_docker_compose
-  pull_ansible_image
   ensure_ansible
   create_ssh_key
   copy_ssh_key
