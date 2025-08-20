@@ -6,13 +6,13 @@ export capath="/opt/.certs"
 export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.yml)
 export ansible_log_dir="$path/log"
 export ansible_image_url="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
-export docker_package_url_x86="https://su-package.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
-export docker_package_url_arm="https://su-package.oss-cn-chengdu.aliyuncs.com/docker/arm64/docker-27.2.0.tgz"
+export docker_package_url_x86="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
+export docker_package_url_arm="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz
 export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
 export target_file_arm="$path/packages/docker/arm64/docker-27.2.0.tgz"
 export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
 export target_docker_filedir_arm="$path/roles/docker/files/arm64/docker-27.2.0.tgz"
-export ssh_pass="sulibao"
+export ssh_pass=$(awk -F': ' '/ssh_pass:/ {print $2}' group_vars/all.yml)
 export os_arch=$(uname -m)
 
 function get_arch_package() {
@@ -150,12 +150,6 @@ function install_docker_compose {
   fi
 }
 
-function pull_ansible_image() {
-  echo -e "Pulling ansible image."
-  docker pull "$ansible_image_url"
-  echo -e "Pulled ansible image."
-}
-
 function ensure_ansible() {
   echo -e "Checking the status of the ansible."
   if test -z "$(docker ps -a | grep ansible_sulibao)"; then
@@ -201,7 +195,6 @@ function main() {
   get_arch_package
   check_docker
   check_docker_compose
-  pull_ansible_image
   ensure_ansible
   create_ssh_key
   copy_ssh_key

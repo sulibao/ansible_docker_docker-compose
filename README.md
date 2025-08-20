@@ -6,10 +6,10 @@ This document is intended to explain how to use Ansible, Docker, and Docker Comp
 
 | IP                     | purpose|
 | :--------------------- | ------ |
-| 192.168.2.190（test1） | Minio1 |
-| 192.168.2.191（test2） | Minio2 |
-| 192.168.2.192（test3） | Minio3 |
-| 192.168.2.193（test4） | Minio4 |
+| 192.168.2.190          | Minio1 |
+| 192.168.2.191          | Minio2 |
+| 192.168.2.192          | Minio3 |
+| 192.168.2.193          | Minio4 |
 
 
 
