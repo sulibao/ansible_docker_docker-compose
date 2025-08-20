@@ -12,7 +12,7 @@ export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
 export target_file_arm="$path/packages/docker/arm/docker-27.2.0.tgz"
 export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
 export target_docker_filedir_arm="$path/roles/docker/files/arm/docker-27.2.0.tgz"
-export ssh_pass="sulibao"
+export ssh_pass=$(awk -F': ' '/ssh_pass:/ {print $2}' group_vars/all.yml)
 export os_arch=$(uname -m)
 
 function get_arch_package() {
@@ -150,12 +150,6 @@ function install_docker_compose {
   fi
 }
 
-function pull_ansible_image() {
-  echo -e "Pulling ansible image."
-  docker pull "$ansible_image_url"
-  echo -e "Pulled ansible image."
-}
-
 function ensure_ansible() {
   echo -e "Checking the status of the ansible."
   if test -z "$(docker ps -a | grep ansible_sulibao)"; then
@@ -177,7 +171,6 @@ function  create_ssh_key(){
   echo -e "Creating sshkey."
   docker exec -i ansible_sulibao /bin/sh -c 'echo -e "y\n"|ssh-keygen -t rsa -N "" -C "deploy@ansible" -f ~/.ssh/id_rsa_ansible -q'
   echo -e "\nCreated sshkey."
-
 }
 
 function copy_ssh_key() {
@@ -196,7 +189,6 @@ function main() {
   get_arch_package
   check_docker
   check_docker_compose
-  pull_ansible_image
   ensure_ansible
   create_ssh_key
   copy_ssh_key

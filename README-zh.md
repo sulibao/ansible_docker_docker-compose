@@ -1,36 +1,35 @@
 # ansible+docker+docker-compose
-本文档用于说明通过ansible容器快速部署多个docker+docker-compose环境。
+本文档用于说明通过ansible容器快速部署多个docker+docker-compose环境。遵循此文档可完成以下服务的安装:
+
+- 单台/多台docker+docker-compose环境
+
+- 单台ansible容器
 
 ## 安装前
 
 ### 修改变量文件"./group_vars/all.yml"
 
-```yaml
+```bash
 vim group_vars/all.yml
 # docker的数据目录
-docker_data_dir: /app/docker_data   
-
+docker_data_dir: /app/docker_data
+# 各台主机的密码
+ssh_pass: sulibao
 ```
 
 ### 修改ansible主机清单
 
-```yaml
+```bash
 [ansible]  
-# 该节点运行ansible容器，它将在其他节点上部署docker+docker-compose 
+# 该节点运行ansible容器，将在ansible里为其他节点部署docker+docker-compose 
 192.168.2.190           
-[other_node01]  
-192.168.2.191
-[other_node02] 
+[other_nodes]  
+192.168.2.191 
 192.168.2.192
-
-[other_nodes:children]
-other_node01
-other_node02
 
 [ansible_cluster:children]
 ansible
-other_node01
-other_node02
+other_nodes
 ```
 
 ## 安装
