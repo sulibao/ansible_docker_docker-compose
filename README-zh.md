@@ -1,6 +1,12 @@
 # prom_alert_node-exporter
 
-本文档用于说明通过docker-compose快速部署prometheus(email)+alertmanager+node-exporter+grafana。
+本文档用于说明通过docker-compose快速部署监控系统。遵循此文档可完成以下服务的安装:
+
+- 控制节点prometheus+grafana+alertmanager+node-exporter+blackbox-exporter服务
+
+- 单节点ansible容器
+
+- 其他节点node-exporter
 
 ## 安装前检查项
 

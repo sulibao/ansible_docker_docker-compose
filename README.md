@@ -1,6 +1,12 @@
 # prom_alert_node-exporter
 
-This document is intended to illustrate the rapid deployment of Prometheus (via docker-compose) along with Alertmanager, Node-Exporter, SNMP-Exporter and Grafana.
+This document is intended to illustrate the rapid deployment of the monitoring system using docker-compose. By following this document, you can complete the installation of the following services:
+
+- Control node: Prometheus + Grafana + Alertmanager + Node-exporter + Blackbox-exporter services
+
+- Single-node Ansible container
+
+- Other nodes: node-exporter
 
 ## Pre-installation inspection items
 
