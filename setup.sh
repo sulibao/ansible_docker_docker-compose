@@ -7,7 +7,7 @@ export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.y
 export ansible_log_dir="$path/log"
 export ansible_image_url="registry.cn-chengdu.aliyuncs.com/su03/ansible:latest"
 export docker_package_url_x86="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/amd/docker-27.2.0.tgz"
-export docker_package_url_arm="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz
+export docker_package_url_arm="https://sulibao.oss-cn-chengdu.aliyuncs.com/docker/arm/docker-27.2.0.tgz"
 export target_file_x86="$path/packages/docker/x86/docker-27.2.0.tgz"
 export target_file_arm="$path/packages/docker/arm64/docker-27.2.0.tgz"
 export target_docker_filedir_x86="$path/roles/docker/files/x86/docker-27.2.0.tgz"
@@ -26,7 +26,6 @@ function get_arch_package() {
   if [[ "$os_arch" == "x86_64" ]]; then
     ARCH="x86"
     echo -e "Detected Operating System: $OS, Architecture：X86"
-    mkdir -p $ansible_log_dir
     if [ -f "$target_file_x86" ]; then
       echo "The file $target_file_x86 already exists, skip download."
     else
@@ -42,7 +41,6 @@ function get_arch_package() {
   elif [[ "$os_arch" == "aarch64" ]]; then
     ARCH="arm64"
     echo -e "Detected Operating System: $OS, Architecture: ARM64"
-    mkdir -p $ansible_log_dir
     if [ -f "$target_file_arm" ]; then
       echo "The file $target_file_arm already exists, skip download."
     else
@@ -152,6 +150,7 @@ function install_docker_compose {
 
 function ensure_ansible() {
   echo -e "Checking the status of the ansible."
+  mkdir -p $ansible_log_dir
   if test -z "$(docker ps -a | grep ansible_sulibao)"; then
     echo -e "Ansible is not running, will run."
     run_ansible
