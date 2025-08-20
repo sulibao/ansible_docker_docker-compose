@@ -97,7 +97,9 @@ monitor涉及到的镜像：
 传输到离线环境中使用`docker/nerdctl load -i xxx.tar`进行导入
 ```
 
-### prometheus.yml(可选)
+### Optional operation
+
+#### prometheus.yml
 
 ```bash
 ......
@@ -110,8 +112,21 @@ scrape_configs:
       - targets:
         - http://xxxxxx
         - http://xxxxxx
-      # 可以填写此处的网络地址，blackbox将会为您监控这些地址是否健康
-      # 此项可以不填，后续要新添加时，填写完毕后请重启prometheus容器
+      # 可以填写此处的网络地址也可以保持现状，blackbox将会为您监控这些地址是否健康
+      # 后续要新添加时，填写完毕后请重启prometheus容器
+```
+
+#### blackbox-config.yml
+
+```bash
+modules:
+  http_2xx:
+    ......
+      tls_config:
+        insecure_skip_verify: false     
+        # 此内容涉及在监测 https 网址时是否可以省略证书验证的问题。若为false，且未配置其他可信证书，则可能无法监测 https 链接及 SSL 证书。
+        # 如果你涉及到要检测https网站，1.请修改此处为true后重启blackbox-exporter容器; 2.对blackbox-exporter镜像进行证书拷贝可构建或者手动拷贝证书进blackbox-exporter容器，此处不进行会说明。
+      ......
 ```
 
 ## 安装和使用

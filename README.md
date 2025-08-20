@@ -113,7 +113,9 @@ In the form of `docker/nerdctl save -o xxx.tar image1 image2 ......`
 Transferred to an offline environment and imported using `docker/nerdctl load -i xxx.tar`
 ```
 
-### prometheus.yml(Optional actions)
+### Optional operation
+
+#### prometheus.yml
 
 ```bash
 ......
@@ -126,8 +128,21 @@ scrape_configs:
       - targets:
         - http://xxxxxx
         - http://xxxxxx
-      # You can fill in the network address here, and blackbox will monitor the health of these addresses for you.
-      # You can leave this blank and restart the prometheus container when you want to add a new one.
+      # You can fill in the network address here or keep it as it is. Blackbox will monitor for you whether these addresses are functioning properly.
+      # When adding new items later, after filling in the information, please restart the Prometheus container.
+```
+
+#### blackbox-config.yml
+
+```bash
+modules:
+  http_2xx:
+    ......
+      tls_config:
+        insecure_skip_verify: false     
+        # This content addresses the issue of whether certificate verification can be omitted when monitoring https URLs. If the answer is false and no other trusted certificates are configured, it may be impossible to monitor https links and SSL certificates.
+        # If you are dealing with the need to detect https websites, 1. Please modify this to true and restart the blackbox-exporter container; 2. You can build or manually copy the certificate into the blackbox-exporter container from the blackbox-exporter image. This will not be explained here.
+      ......
 ```
 
 ## Install & Use
