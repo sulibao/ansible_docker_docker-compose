@@ -113,6 +113,23 @@ In the form of `docker/nerdctl save -o xxx.tar image1 image2 ......`
 Transferred to an offline environment and imported using `docker/nerdctl load -i xxx.tar`
 ```
 
+### prometheus.yml(Optional actions)
+
+```bash
+......
+scrape_configs:
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://xxxxxx
+        - http://xxxxxx
+      # You can fill in the network address here, and blackbox will monitor the health of these addresses for you.
+      # You can leave this blank and restart the prometheus container when you want to add a new one.
+```
+
 ## Install & Use
 
 ```bash

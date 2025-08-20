@@ -65,6 +65,20 @@ services:
     networks:
       - monitor_network
 
+  blackbox-exporter:
+    image: ${blackbox_image}
+    container_name: blackbox-exporter
+    restart: always
+    network_mode: monitor_network
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox-config.yml:/opt/bitnami/blackbox-exporter/conf/config.yml:ro
+    environment:
+      - TZ=Asia/Shanghai
+    command:
+      - --config.file=/opt/bitnami/blackbox-exporter/conf/config.yml
+
 volumes:
   grafana_data:    
     driver: local

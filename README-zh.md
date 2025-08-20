@@ -97,6 +97,23 @@ monitor涉及到的镜像：
 传输到离线环境中使用`docker/nerdctl load -i xxx.tar`进行导入
 ```
 
+### prometheus.yml(可选)
+
+```bash
+......
+scrape_configs:
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://xxxxxx
+        - http://xxxxxx
+      # 可以填写此处的网络地址，blackbox将会为您监控这些地址是否健康
+      # 此项可以不填，后续要新添加时，填写完毕后请重启prometheus容器
+```
+
 ## 安装和使用
 
 ```bash

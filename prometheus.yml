@@ -21,6 +21,22 @@ scrape_configs:
           - '/etc/prometheus/targets.json'
         refresh_interval: 1m
 
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://xxxxxx
+        - http://xxxxxx
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
 alerting:
   alertmanagers:
     - static_configs:
