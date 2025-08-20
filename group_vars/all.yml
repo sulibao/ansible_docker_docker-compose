@@ -1,2 +1,3 @@
 docker_data_dir: /app/docker_data
 ssh_pass: sulibao
+install_other_docker: false

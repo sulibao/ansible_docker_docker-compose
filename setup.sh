@@ -2,6 +2,7 @@
 
 set -e
 export path=`pwd`
+export install_other_docker=$(awk -F': ' '/install_other_docker:/ {print $2}' group_vars/all.yml)
 export capath="/opt/.certs"
 export docker_data=$(awk -F': ' '/docker_data_dir:/ {print $2}' group_vars/all.yml)
 export ansible_log_dir="$path/log"
@@ -30,8 +31,7 @@ function get_arch_package() {
     if [ -f "$target_file_x86" ]; then
       echo "The file $target_file_x86 already exists, skip download."
     else
-      mkdir -p "$(dirname "$target_file_x86")" && \
-      mkdir -p "$(dirname "$target_docker_filedir_x86")"
+      mkdir -p "$(dirname "$target_file_x86")"
       curl -C - -o "$target_file_x86" "$docker_package_url_x86"
       if [ $? -eq 0 ]; then
         echo "The file downloaded successfully."
@@ -46,8 +46,7 @@ function get_arch_package() {
     if [ -f "$target_file_arm" ]; then
       echo "The file $target_file_arm already exists, skip download."
     else
-      mkdir -p "$(dirname "$target_file_arm")" && \
-      mkdir -p "$(dirname "$target_docker_filedir_arm")"
+      mkdir -p "$(dirname "$target_file_arm")"
       curl -C - -o "$target_file_arm" "$docker_package_url_arm"
       if [ $? -eq 0 ]; then
         echo "The file downloaded successfully."
@@ -107,11 +106,9 @@ function install_docker() {
   echo "Installing docker."
   if [[ "$ARCH" == "x86" ]]
   then
-    export DOCKER_OFFLINE_PACKAGE=$target_file_x86 && \
-    cp -v -f $target_file_x86 $target_docker_filedir_x86
+    export DOCKER_OFFLINE_PACKAGE=$target_file_x86
   else
-    export DOCKER_OFFLINE_PACKAGE=$target_file_arm && \
-    cp -v -f $target_file_arm $target_docker_filedir_arm
+    export DOCKER_OFFLINE_PACKAGE=$target_file_arm
   fi
   tar axvf $DOCKER_OFFLINE_PACKAGE -C /usr/bin/ --strip-components=1
   cp -v -f $path/packages/docker/docker.service /usr/lib/systemd/system/
@@ -185,14 +182,51 @@ function install_docker_slave() {
   echo -e "\nInstalled docker for other nodes."
 }
 
+function install_other_docker() {
+  echo -e "Installing docker & compose for other nodes."
+  if [[ "$os_arch" == "x86_64" ]]; then
+    ARCH="x86"
+    if [ -f "$target_docker_filedir_x86" ]; then
+      echo "The file $target_docker_filedir_x86 already exists, skip download."
+    else
+      mkdir -p "$(dirname "$target_docker_filedir_x86")" && \
+      cp -v -f $target_file_x86 $target_docker_filedir_x86
+      if [ $? -eq 0 ]; then
+        echo "The file copy successfully."
+      else
+        echo "Failed to copy the file."
+      fi
+    fi
+  elif [[ "$os_arch" == "aarch64" ]]; then
+    ARCH="arm64"
+    if [ -f "$target_docker_filedir_arm" ]; then
+      echo "The file $target_docker_filedir_arm already exists, skip download."
+    else
+      mkdir -p "$(dirname "$target_docker_filedir_arm")" && \
+      cp -v -f $target_file_arm $target_docker_filedir_arm
+      if [ $? -eq 0 ]; then
+        echo "The file copy successfully."
+      else
+        echo "Failed to copy the file."
+      fi
+    fi
+  else
+    echo -e "Unsupported architecture detected: $os_arch"
+    exit 1
+  fi
+  ensure_ansible
+  create_ssh_key
+  copy_ssh_key  
+  install_docker_slave
+}
+
 function main() {
   get_arch_package
   check_docker
   check_docker_compose
-  ensure_ansible
-  create_ssh_key
-  copy_ssh_key
-  install_docker_slave
+  if [ "$install_other_docker" = true ]; then
+    install_other_docker 
+  fi
 }
 
 main
